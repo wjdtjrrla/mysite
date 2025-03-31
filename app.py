@@ -49,6 +49,7 @@ def dashboard():
     # 특정 컬럼 생성
     result['ym'] = result.index.strftime('%Y-%m')
     # 테이블 정제
+    # 한 달 중에 가장 높은 종가, 
     result = pd.concat(
         [
             result.groupby('ym')[['Close','trade','acc_rtn']].max(),
