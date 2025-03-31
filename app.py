@@ -1,19 +1,86 @@
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, url_for,redirect, session
 import pandas as pd
 import invest
 from database import MyDB
+import os
+from data import querys
+from dotenv import load_dotenv
 
+#.env 파일 로드
+load_dotenv()
 
 #Flask 생성
 app = Flask(__name__)
 
+#session 비밀키 지정
+app.secret_key = os.getenv('secret')
+
+
 # database_class 생성
-mydb = MyDB()
+mydb = MyDB(
+    _host = os.getenv('host'),
+    _port = int(os.getenv('port')),
+    _user = os.getenv('user'),
+    _password = os.getenv('pwd'),
+    _db = os.getenv('db')
+)
+
+# 테이블 생성하는 쿼리 생성
+mydb.execute_query(querys.create_query)
+
+# /api 생성
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+#회원가입 페이지로 이동
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+#로그인 api
+@app.route('/signin', methods=['post'])
+def signin():
+    input_id = request.form['id']
+    input_pass = request.form['password']
+    login_result = mydb.execute_query(querys.login_query,input_id,input_pass)
+    if len(login_result) == 1:
+        print('로그인 성공')
+        # 세션데이터 저장
+        session['user_info'] = [input_id,input_pass]
+        return redirect('/invest')
+    else:
+        return redirect('/')
+
+
+#회원가입 api
+@app.route('/signup2', methods=['post'])
+def signup2():
+    #id, password, name 데이터를 받아온다.
+    input_id = request.form['id']
+    input_pass = request.form['password']
+    input_name = request.form['name']
+    
+    # 사용가능한 아이디인가 확인
+    check_result = mydb.execute_query(querys.check_query, input_id)
+    if len(check_result) == 0:
+        # 사용 가능 아이디
+        mydb.execute_query(querys.signup_query, input_id, input_pass, input_name,inplace=True)
+        return redirect('/')
+    else:
+        print('중복된 아이디가 존재합니다.')
+        return redirect('/signup')
+    
+
+
 
 # 유저가 입력할 (종목, 투자기간, 투자 전략 방식을 입력하는)
 @app.route('/invest')
 def first():
-    return render_template('invest.html')
+    if 'user_info' in session:
+        return render_template('invest.html')
+    else:
+        return redirect('/')
 
 # 대쉬보드 확인하는 API
 # 대쉬보드에서 필요한 데이터?
@@ -24,6 +91,8 @@ def first():
 
 @app.route('/dashboard')
 def dashboard():
+    if 'user_info' not in session:
+        return redirect('/')
     # get 방식으로 받아온 데이터 -> request.args
     # post 였다면? request.form
     input_code = request.args['code']
