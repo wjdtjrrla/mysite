@@ -1,10 +1,14 @@
 from flask import Flask, request, render_template, url_for
 import pandas as pd
 import invest
+from database import MyDB
 
 
 #Flask 생성
 app = Flask(__name__)
+
+# database_class 생성
+mydb = MyDB()
 
 # 유저가 입력할 (종목, 투자기간, 투자 전략 방식을 입력하는)
 @app.route('/invest')
