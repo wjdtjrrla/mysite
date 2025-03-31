@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # 유저가 입력할 (종목, 투자기간, 투자 전략 방식을 입력하는)
 @app.route('/invest')
-def invest():
+def first():
     return render_template('invest.html')
 
 # 대쉬보드 확인하는 API
@@ -43,12 +43,22 @@ def dashboard():
         result = invest_class.bollinger()
     elif input_type == 'mmt':
         result = invest_class.momentum()
-    # 인덱스 초기화
-    result.reset_index(drop=False,inplace=True)
     # 특정 컬럼만 필터
-    result = result[['Date','Close','trade','rtn','acc_rtn']]
+    result = result[['Close','trade','rtn','acc_rtn']]
+    
+    # 특정 컬럼 생성
+    result['ym'] = result.index.strftime('%Y-%m')
+    # 테이블 정제
+    result = pd.concat(
+        [
+            result.groupby('ym')[['Close','trade','acc_rtn']].max(),
+            result.groupby('ym')[['rtn']].mean()
+        ], axis=1
+    )
+    result.reset_index(inplace=True, drop=False)
     #컬럼 이름 변경
-    result.columns =['시간','종가','보유내역','일별 수익률','누적 수익률']
+    result.columns = ['시간','종가','보유내역','누적 수익률','일별 수익률']
+    
     
     # 컬럼
     cols_list = list(result.columns)
@@ -65,11 +75,7 @@ def dashboard():
                            x_data = x_data,
                            y_data = y_data,
                            y1_data = y1_data
-                           )
-
-
-
-
+    )
 
 
 app.run(debug=True)

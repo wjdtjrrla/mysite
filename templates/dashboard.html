@@ -325,7 +325,7 @@
       <!-- ChartJs를 이용하여 그래프 생성 -->
       <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
       <canvas class="my-4 w-100" id="myChart2" width="900" height="380"></canvas>
-      <canvas class="my-4 w-100" id="myChart3" width="900" height="380"></canvas>
+      <!-- <canvas class="my-4 w-100" id="myChart3" width="900" height="380"></canvas> -->
 
       <!-- 표가 생성되는 부분 -->
       <h2>Section title</h2>
@@ -364,7 +364,7 @@
     <!-- Chart.js 로드 하는 부분 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
     
-     <!-- 실제 표를 만들어주는 JS 파일 -->
+     <!-- 실제 그래프를 만들어주는 JS 파일 -->
      <script>
         // Graphs
         const ctx = document.getElementById('myChart')
@@ -396,20 +396,19 @@
           }
         })
      </script>
-    
-    <!-- 거래량 표를 만들어주는 JS 파일 -->
-    <script>
+
+     <script>
       // Graphs
       const ctx2 = document.getElementById('myChart2')
       // eslint-disable-next-line no-unused-vars
       const myChart2 = new Chart(ctx2, {
-        type: 'line',
+        type: 'bar',
         data: {
           // x축 데이터
           labels: {{x_data | tojson}},
           // y축의 데이터들
           datasets: [{
-            data: {{y_data2 | tojson}},
+            data: {{y1_data | tojson}},
             lineTension: 0,
             backgroundColor: 'transparent',
             borderColor: '#007bff',
@@ -429,64 +428,10 @@
         }
       })
    </script>
+   
 
-   <!-- 거래량 표를 만들어주는 JS 파일 -->
-   <script>
-    // Graphs
-    const ctx3 = document.getElementById('myChart3')
-    // eslint-disable-next-line no-unused-vars
-    const myChart3 = new Chart(ctx3, {
-      type: 'line',
-      data: {
-        // x축 데이터
-        labels: {{x_data | tojson}},
-        // y축의 데이터들
-        datasets: [
-          {
-            label:'종가',
-            data: {{y_data | tojson}},
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#007bff',
-            borderWidth: 4,
-            pointBackgroundColor: '#007bff',
-            yAxisID : 'y'
-          },
-          {
-            label:'거래량',
-            data: {{y_data2 | tojson}},
-            type:'bar',
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#8B0000',
-            borderWidth: 4,
-            pointBackgroundColor: '#8B0000',
-            yAxisID :'y1'
-          }
-        ]
-      },
-      options: {
-        plugins: {
-          legend: {
-            display: true
-          },
-          tooltip: {
-            boxPadding: 3
-          },
-        },
-        scales:{
-          y:{
-            position : 'left'
-          },
-          y1:{
-            position : 'right',
-            min:0,
-            max : 100000000
-          }
-        }
-      }
-    })
- </script>
+
+ 
 
   </body>
 </html>
