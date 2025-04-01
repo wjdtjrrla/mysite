@@ -15,7 +15,6 @@ app = Flask(__name__)
 #session 비밀키 지정
 app.secret_key = os.getenv('secret')
 
-
 # database_class 생성
 mydb = MyDB(
     _host = os.getenv('host'),
