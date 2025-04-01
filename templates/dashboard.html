@@ -7,7 +7,9 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
-    <title>Dashboard Template · Bootstrap v5.3</title>
+    <title>Dashboard</title>
+    <!-- gtag.ytml을 포함 -->
+    {% include 'gtag.html' %}
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
 
@@ -108,6 +110,8 @@
     <!-- flask에서 이용할 때 경로 수정 -->
     <!-- Custom styles for this template -->
     <link href="{{url_for('static',filename='css/dashboard.css')}}" rel="stylesheet">
+    <!-- gtag.ytml을 포함 -->
+    {% include 'gtag.html' %}
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
